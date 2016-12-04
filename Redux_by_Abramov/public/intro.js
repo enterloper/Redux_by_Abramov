@@ -9,30 +9,30 @@ const counter = (state = 0, action) => {
   }
 }
 
-const { createStore } = Redux;
-/*
-THE ABOVE ON LINE 11 IS THE SAME AS THOSE ON 14 & 15
-var createStore = Redux.createStore;
-import { createStore } = from 'redux;
-*/
+const createStore = (reducer) => {
+  let state;
+  let listeners = [];
 
-/*
-This store binds together the three principles of Redux. 1: It holds the current application's state object. 2: It lets you dispatch actions. 3: When you create it, you need to specify the reducer that tells how state is updated with actions.
+  const getState = () => state;
 
-In this example, we're calling createStore with "counter" as the reducer that manages the state updates. This store has three important methods.
-*/
-  const store = createStore(counter);
-  console.log(store.getState());
-/*
-The first method of this store is called getState. It retrieves the current state of the Redux store. If we were on this, we're going to see 0 because this is the initial state of our application.
+  const dispatch = (action) => {
+    state = reducer(state, action);
+    listeners.forEach(listener => listener());
+  };
 
-The second and the most commonly used store method is called dispatch. It lets you dispatch actions to change the state of your application. If we log this store state after dispatch, we're going to see that it has changed.
+  const subscribe = (listener) => {
+    listeners.push(listener);
+    return () => {
+      listeners.filter(l => l !== listener)
+    }
+  };
 
-  store.dispatch({ type: 'INCREMENT' });
-  console.log(store.getState());
+  dispatch({});
 
-store.subscribe lets you register a callback that the Redux store will call ANY TIME AN ACTION HAS BEEN DISPATCHED, so that you can update the UI of your application. It will reflect the current application state.
-*/
+  return { getState, dispatch, subscribe };
+};
+
+const store = createStore(counter);
 
 const render = () => {
 	document.body.innerText = store.getState();
@@ -43,11 +43,5 @@ render();
 
 document.addEventListener('click', () => {
   store.dispatch({ type: 'INCREMENT' });
-})
-
-/*
-The rendering of below will not take place initially because it is called inside the subscribe function. For this reason we can extract the behavior into a function called render to get an initial rendering.
-store.subscribe(() => {
-   document.body.innerText = store.getState();
 });
-*/
+
