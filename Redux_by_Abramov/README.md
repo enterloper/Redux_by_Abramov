@@ -1,0 +1,1 @@
+These are my notes from the Egghead.io course on Redux presented by Redux creator Dan Abramov.
