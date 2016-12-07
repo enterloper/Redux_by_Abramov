@@ -1,4 +1,4 @@
 node_modules
 .DS_Store
-bundle.js
+Redux_by_Abramov/bundle.js
 npm-debug.log
